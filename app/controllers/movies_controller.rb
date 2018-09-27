@@ -16,34 +16,23 @@ class MoviesController < ApplicationController
   def index
     @movies = Movie.all
     @all_ratings = Movie.all_ratings
-    @@sort_by = params[:sort_by]
-    @checked_ratings = params[:ratings]
+    @@sort_by = params[:sort_by] || session[:sort_by]
+    @checked_ratings = params[:ratings] || session[:ratings]
     
-    if @@sort_by != nil
-      @movies = @movies.order(@@sort_by)
-      if @@sort_by == 'title'
-        @title_header = 'hilite'
-      elsif @@sort_by == 'release_date'
-        @release_date_header = 'hilite'
-      end
+    
+    @movies = @movies.order(@@sort_by)
+    if @@sort_by == 'title'
+      @title_header = 'hilite'
+    elsif @@sort_by == 'release_date'
+      @release_date_header = 'hilite'
     end
     
-    if @checked_ratings == nil
-      @checked_ratings = @@checked_ratings_history
-      if @@sort_by != nil
-      @movies = @movies.order(@@sort_by)
-      if @@sort_by == 'title'
-        @title_header = 'hilite'
-      elsif @@sort_by == 'release_date'
-        @release_date_header = 'hilite'
-      end
+    if @checked_ratings == nil 
       @checked_ratings = @all_ratings
-      end  
-      #return @checked_ratings
     else
-      @@checked_ratings_history = @checked_ratings
-      @movies = Movie.where("rating in (?)", @checked_ratings.keys)
-      #return @movies
+      session[:ratings] = @checked_ratings
+      session[:sort_by] = @@sort_by
+      @movies = Movie.where("rating in (?)", @checked_ratings.keys).order(@@sort_by)
     end
 
   end
