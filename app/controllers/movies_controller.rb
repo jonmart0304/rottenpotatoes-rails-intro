@@ -29,6 +29,7 @@ class MoviesController < ApplicationController
     
     if @checked_ratings == nil 
       @checked_ratings = @all_ratings
+      session[:sort_by] = @@sort_by
     else
       session[:ratings] = @checked_ratings
       session[:sort_by] = @@sort_by
